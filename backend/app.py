@@ -64,14 +64,18 @@ def register():
     else:
         return {"msg":"Account successfully created."}, 200
 
-@app.route("/levels", methods=["GET"])
+@app.route("/levels", methods=["GET","POST"])
 def solve_level():
-    
-    if "authenticated" in session == True:
-        if get_level(session["username"]) >= 5:
-            return {"error":"You are already at the last level."}, 200
-        row = con.execute("UPDATE users SET levels = levels + 1 WHERE username=?", [session["username"]])
-        con.commit()
-        return {"level":get_level(request.form['username'])}, 200
-    else:
-        return {"error":"You are not authenticated."}
+    if request.method == "POST":
+        if "authenticated" in session == True:
+            if get_level(session["username"]) >= 5:
+                return {"error":"You are already at the last level."}, 200
+            row = con.execute("UPDATE users SET levels = levels + 1 WHERE username=?", [session["username"]])
+            con.commit()
+            return {"level":get_level(request.form['username'])}, 200
+        else:
+            return {"error":"You are not authenticated."}
+
+    elif request.method == "GET":
+        if "authenticated" in session == True:
+            return {"level":get_level(session["username"])},200
