@@ -12,9 +12,9 @@ pygame.init()
 LARGEUR, HAUTEUR = 800, 500
 FPS = 60
 VITESSE_JOUEUR = 5
-JUMPFORCE = 10
+JUMPFORCE = 20
 GRAVITE = 1
-
+WHITE, BLACK, RED, BLUE, GREEN= (255,255,255),(0,0,0),(255,0,0),(0,0,255),(0,255,0)
 # Crée la fenêtre
 ecran = pygame.display.set_mode((LARGEUR, HAUTEUR))
 
@@ -47,7 +47,7 @@ def deplacer_joueur(joueur):
         joueur.mouvement_droite(VITESSE_JOUEUR)
     if keys[pygame.K_q] or keys[pygame.K_LEFT]: # Si la touche Q ou la flèche gauche est appuyée, le joueur se déplace vers la gauche c'est le meme principe
         joueur.mouvement_gauche(VITESSE_JOUEUR)
-    if keys[pygame.K_SPACE]:
+    if keys[pygame.K_SPACE] and joueur.floored:
         joueur.jump()
         
     
@@ -58,8 +58,8 @@ def update(joueur):
 
     joueur.update(GRAVITE)
 
-    joueur.rectangle.x = constrain(joueur.rectangle.x, 10, LARGEUR - 60)
-    joueur.rectangle.y = constrain(joueur.rectangle.y, 10, HAUTEUR - 60)
+    joueur.rect.x = constrain(joueur.rect.x, 10, LARGEUR - 60)
+    #joueur.rect.y = constrain(joueur.rect.y, 10, HAUTEUR - 60)
 
 def main(ecran): 
     """
@@ -73,7 +73,7 @@ def main(ecran):
     clock = pygame.time.Clock() # Initialisation de l'horloge du jeu pour contrôler le taux de rafraîchissement
 
     joueur = player.Joueur(200, 200, 50, 50, JUMPFORCE) # Crée un joueur
-    
+    sol = pygame.Rect(0,HAUTEUR - 20, LARGEUR, 50)
     run = True  # Variable de contrôle pour maintenir la boucle de jeu active
 
     # Boucle principale du jeu
@@ -87,12 +87,18 @@ def main(ecran):
                 break
         
         
-        ecran.fill((0, 0, 0)) # à modifier après avec un fonction pour dessiner le background
+        ecran.fill(BLACK) # à modifier après avec un fonction pour dessiner le background
+        pygame.draw.rect(ecran,WHITE, sol)
         joueur.boucle()
         deplacer_joueur(joueur)
         dessiner(ecran, joueur)
+        
+        
         pygame.display.flip()
         update(joueur) #on met a jour les variables
+        if not joueur.floored:
+            joueur.collideSol(sol)
+            print(joueur.floored)
     # Quitte proprement Pygame puis quitte le programme Python
     pygame.quit()
     quit()
