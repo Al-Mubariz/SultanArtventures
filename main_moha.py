@@ -1,25 +1,44 @@
 import pygame
 import random
 import player
+from train import Train
 import math
 from os import listdir
 from os.path import isfile, join
+from threading import Timer
+
 
 # Initialisation
 pygame.init()
 
 # Constantes
-LARGEUR, HAUTEUR = 800, 500
+LARGEUR, HAUTEUR = 1000, 700
 FPS = 60
 VITESSE_JOUEUR = 5
-JUMPFORCE = 10
+VITESSE_TRAIN = 20
+JUMPFORCE = 20
 GRAVITE = 1
+WHITE, BLACK, RED, BLUE, GREEN= (255,255,255),(0,0,0),(255,0,0),(0,0,255),(0,255,0)
+
 
 # Crée la fenêtre
 ecran = pygame.display.set_mode((LARGEUR, HAUTEUR))
 
 # Nom de la fenêtre
 pygame.display.set_caption("Sultan's Artventures")
+
+def get_background(name):
+    """ Récupère les tiles et l'image de fond. """
+    image = pygame.image.load(join("assets", name))
+    _, _, largeur, hauteur = image.get_rect()
+    tiles = []
+
+    for i in range(LARGEUR // largeur + 1):
+        for j in range(HAUTEUR // hauteur + 1):
+            pos = (i * largeur, j * hauteur)
+            tiles.append(pos)
+    
+    return tiles, image
 
 def constrain(var, minV, maxV): 
     """on regarde si la variable var est entre minV et maxV sinon on renvoie minV ou maxV"""
@@ -31,12 +50,15 @@ def constrain(var, minV, maxV):
         return var
     
 
-def dessiner(ecran, joueur):
+def dessiner(ecran, background, bg_image, joueur, metro):
     """Dessine les éléments du jeu sur l'écran."""
+    for tile in background:
+        ecran.blit(bg_image, tile)
+
 
     joueur.dessiner(ecran)
+    metro.dessiner(ecran)
     pygame.display.update()
-
 
 def deplacer_joueur(joueur):
     """Déplace le joueur en fonction des touches du clavier appuyées."""
@@ -47,7 +69,7 @@ def deplacer_joueur(joueur):
         joueur.mouvement_droite(VITESSE_JOUEUR)
     if keys[pygame.K_q] or keys[pygame.K_LEFT]: # Si la touche Q ou la flèche gauche est appuyée, le joueur se déplace vers la gauche c'est le meme principe
         joueur.mouvement_gauche(VITESSE_JOUEUR)
-    if keys[pygame.K_SPACE]:
+    if keys[pygame.K_SPACE] and joueur.floored:
         joueur.jump()
         
     
@@ -58,8 +80,14 @@ def update(joueur):
 
     joueur.update(GRAVITE)
 
-    joueur.rectangle.x = constrain(joueur.rectangle.x, 10, LARGEUR - 60)
-    joueur.rectangle.y = constrain(joueur.rectangle.y, 10, HAUTEUR - 60)
+    joueur.rect.x = constrain(joueur.rect.x, 10, LARGEUR - 60)
+    #joueur.rectangle.y = constrain(joueur.rectangle.y, 10, HAUTEUR - 60)
+
+
+def deplacer_train(metro):
+    """Déplace le train vers la gauche."""
+    metro.mouvement_gauche(VITESSE_TRAIN)
+
 
 def main(ecran): 
     """
@@ -71,8 +99,14 @@ def main(ecran):
     
     
     clock = pygame.time.Clock() # Initialisation de l'horloge du jeu pour contrôler le taux de rafraîchissement
+    background, bg_image = get_background("paris.jpg")
+
 
     joueur = player.Joueur(200, 200, 50, 50, JUMPFORCE) # Crée un joueur
+    metro = Train(1000, 600, 500, 100)
+    sol = pygame.Rect(0,HAUTEUR - 20, LARGEUR, 50)
+
+
     
     run = True  # Variable de contrôle pour maintenir la boucle de jeu active
 
@@ -86,13 +120,33 @@ def main(ecran):
                 run = False
                 break
         
-        
-        ecran.fill((0, 0, 0)) # à modifier après avec un fonction pour dessiner le background
+        # Mise à jour de l'écran
         joueur.boucle()
+        metro.boucle()
         deplacer_joueur(joueur)
-        dessiner(ecran, joueur)
+        dessiner(ecran, background, bg_image, joueur, metro)
+        pygame.draw.rect(ecran,WHITE, sol)
         pygame.display.flip()
         update(joueur) #on met a jour les variables
+
+        if not joueur.floored:
+            joueur.collideSol(sol)
+            print(joueur.floored)
+
+
+
+        
+        
+        if metro.train.x + metro.train.width < 0: # Si le train sort de l'écran, on le réinitialise
+            metro = Train(1000, 600, 500, 100)
+        temps = random.randint(5, 10)
+        t = Timer(temps, deplacer_train, [metro])
+        t.start()
+        
+
+
+    pygame.quit()
+    quit()
     # Quitte proprement Pygame puis quitte le programme Python
     pygame.quit()
     quit()

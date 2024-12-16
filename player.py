@@ -1,8 +1,9 @@
 # Classe Joueur
 import pygame
 
+
 class Joueur(pygame.sprite.Sprite):
-    COULEUR = (255, 0, 0) # Couleur du joueur
+    COULEUR = (255,0,0) # Couleur du joueur
 
     def __init__(self, x, y, largeur, hauteur, jumpforce): 
         """
@@ -10,15 +11,15 @@ class Joueur(pygame.sprite.Sprite):
         (tsais les trucs que Mr Djahnit veut qu'on mette dans le constructeur)
         """
         self.jumpforce = jumpforce
-        self.rectangle = pygame.Rect(x, y, largeur, hauteur) # Crée un rectangle pour le joueur
+        self.rect= pygame.Rect(x, y, largeur, hauteur) # Crée un rectangle pour le joueur
         self.x_vitesse = 0  # Vitesse de déplacement du joueur
         self.y_vel = 0
         self.direction = "gauche" # Direction du joueur
         self.compteur_animation = 0 # Compteur pour l'animation du joueur
-
+        self.floored = False
 
     def mouvement(self, dx):
-        self.rectangle.x += dx # Ajoute la vitesse de déplacement à la vitesse actuelle
+        self.rect.x += dx # Ajoute la vitesse de déplacement à la vitesse actuelle
 
 
     def mouvement_droite(self, vitesse): 
@@ -44,16 +45,28 @@ class Joueur(pygame.sprite.Sprite):
 
     def dessiner(self, ecran):
         """"Dessine le joueur sur l'écran."""
-        pygame.draw.rect(ecran, self.COULEUR, self.rectangle)
+        pygame.draw.rect(ecran, self.COULEUR, self.rect)
 
     def jump(self):
         self.y_vel = -self.jumpforce
+        self.floored = False
     
     def update(self, grav):
-
+        self.lastY = self.rect.y
         self.y_vel+= grav
         
-        self.rectangle.y += self.y_vel
+        if self.floored:
+            self.rect.y = self.lastY
+        else:
+            self.rect.y += self.y_vel
+
+    def collideSol(self, sol):
+        proj = self.rect.move(5,0)
+        if proj.colliderect(sol):
+            self.floored = True
+        else: self.floored = False
+
+
 
 
    
