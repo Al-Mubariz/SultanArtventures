@@ -48,10 +48,30 @@ class Joueur(pygame.sprite.Sprite):
         pygame.draw.rect(ecran, self.COULEUR, self.rect)
 
     def jump(self):
+        """
+        Fait sauter le joueur en définissant la vitesse verticale à une valeur négative
+        définie par la force de saut et en marquant le joueur comme n'étant pas au sol.
+
+        Attributs:
+        self.y_vel (float): La vitesse verticale du joueur.
+        self.jumpforce (float): La force appliquée au joueur pour le faire sauter.
+        self.floored (bool): Un indicateur indiquant si le joueur est au sol.
+        """
+        
         self.y_vel = -self.jumpforce
         self.floored = False
     
     def update(self, grav):
+        """
+        Met à jour la position verticale du joueur en fonction de la gravité.
+        Args:
+            grav (float): La valeur de la gravité à appliquer à la vitesse verticale du joueur.
+        Attributs modifiés:
+            self.lastY (int): La dernière position verticale du joueur.
+            self.y_vel (float): La vitesse verticale du joueur, augmentée par la gravité.
+            self.rect.y (int): La nouvelle position verticale du joueur, ajustée en fonction de la vitesse verticale.
+        """
+
         self.lastY = self.rect.y
         self.y_vel+= grav
         
@@ -61,6 +81,16 @@ class Joueur(pygame.sprite.Sprite):
             self.rect.y += self.y_vel
 
     def collideSol(self, sol):
+        """
+        Vérifie si le joueur entre en collision avec le sol.
+        Cette méthode déplace le rectangle de collision du joueur de 5 pixels vers la droite
+        et vérifie s'il entre en collision avec le rectangle du sol. Si une collision est détectée,
+        l'attribut 'floored' du joueur est défini sur True, sinon il est défini sur False.
+        Args:
+            sol (pygame.Rect): Le rectangle représentant le sol avec lequel vérifier la collision.
+        """
+
+        
         proj = self.rect.move(5,0)
         if proj.colliderect(sol):
             self.floored = True

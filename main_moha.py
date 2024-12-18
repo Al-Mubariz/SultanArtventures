@@ -76,8 +76,7 @@ def deplacer_joueur(joueur):
 
 
 def update(joueur):
-
-
+    """Met à jour la position du joueur en fonction de sa vitesse."""
     joueur.update(GRAVITE)
 
     joueur.rect.x = constrain(joueur.rect.x, 10, LARGEUR - 60)
@@ -99,12 +98,12 @@ def main(ecran):
     
     
     clock = pygame.time.Clock() # Initialisation de l'horloge du jeu pour contrôler le taux de rafraîchissement
-    background, bg_image = get_background("MetroBackgroundBonnesDimensions.png")
+    background, bg_image = get_background("MetroBackgroundBonnesDimensions.png") # Récupère les tiles et l'image de fond
 
-
+    """ Crée un joueur, un train et un sol """
     joueur = player.Joueur(200, 200, 25, 50, JUMPFORCE) # Crée un joueur
-    metro = Train(1000, 500, 1000, 200)
-    sol = pygame.Rect(0,HAUTEUR - 20, LARGEUR, 50)
+    metro = Train(1000, 500, 1000, 200) # Crée un train
+    sol = pygame.Rect(0,HAUTEUR - 20, LARGEUR, 50) # Crée un rectangle pour le sol
 
 
     
@@ -121,23 +120,22 @@ def main(ecran):
                 break
         
         # Mise à jour de l'écran
-        joueur.boucle()
-        metro.boucle()
-        deplacer_joueur(joueur)
-        dessiner(ecran, background, bg_image, joueur, metro)
-        pygame.draw.rect(ecran,WHITE, sol)
-        pygame.display.flip()
+        joueur.boucle() # Met à jour la position du joueur
+        metro.boucle() # Met à jour la position du train
+        deplacer_joueur(joueur) # Déplace le joueur en fonction des touches du clavier appuyées
+        dessiner(ecran, background, bg_image, joueur, metro) # Dessine les éléments du jeu sur l'écran
+        pygame.draw.rect(ecran,WHITE, sol) # Dessine le sol
+        pygame.display.flip() # Met à jour l'écran
         update(joueur) #on met a jour les variables
 
+        """Si le joueur n'est pas sur le sol, on vérifie s'il est en collision avec le sol"""
         if not joueur.floored:
             joueur.collideSol(sol)
             print(joueur.floored)
 
 
-
-        
-        
-        if metro.train.x + metro.train.width < 0: # Si le train sort de l'écran, on le réinitialise
+        """ Si le train sort de l'écran, on le réinitialise et on le fait réapparaître après un temps aléatoire"""
+        if metro.train.x + metro.train.width < 0: 
             metro = Train(1000, 500, 1000, 200)
         temps = random.randint(5, 10)
         t = Timer(temps, deplacer_train, [metro])
