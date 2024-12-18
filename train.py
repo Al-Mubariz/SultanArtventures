@@ -4,7 +4,7 @@ import pygame
 class Train(pygame.sprite.Sprite):
     COULEUR = (0, 50, 255)
     
-    def __init__(self, x, y, largeur = 700, hauteur = 100):
+    def __init__(self, x, y, largeur, hauteur):
         self.train = pygame.Rect(x, y, largeur, hauteur)
         self.x_vitesse = 0
         self.direction = "gauche"

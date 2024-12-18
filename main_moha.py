@@ -16,7 +16,7 @@ LARGEUR, HAUTEUR = 1000, 700
 FPS = 60
 VITESSE_JOUEUR = 5
 VITESSE_TRAIN = 20
-JUMPFORCE = 20
+JUMPFORCE = 30
 GRAVITE = 1
 WHITE, BLACK, RED, BLUE, GREEN= (255,255,255),(0,0,0),(255,0,0),(0,0,255),(0,255,0)
 
@@ -99,11 +99,11 @@ def main(ecran):
     
     
     clock = pygame.time.Clock() # Initialisation de l'horloge du jeu pour contrôler le taux de rafraîchissement
-    background, bg_image = get_background("paris.jpg")
+    background, bg_image = get_background("MetroBackgroundBonnesDimensions.png")
 
 
-    joueur = player.Joueur(200, 200, 50, 80, JUMPFORCE) # Crée un joueur
-    metro = Train(1000, 600, 500, 100)
+    joueur = player.Joueur(200, 200, 25, 50, JUMPFORCE) # Crée un joueur
+    metro = Train(1000, 500, 1000, 200)
     sol = pygame.Rect(0,HAUTEUR - 20, LARGEUR, 50)
 
 
@@ -138,7 +138,7 @@ def main(ecran):
         
         
         if metro.train.x + metro.train.width < 0: # Si le train sort de l'écran, on le réinitialise
-            metro = Train(1000, 600, 500, 100)
+            metro = Train(1000, 500, 1000, 200)
         temps = random.randint(5, 10)
         t = Timer(temps, deplacer_train, [metro])
         t.start()
