@@ -102,7 +102,7 @@ def main(ecran):
     background, bg_image = get_background("paris.jpg")
 
 
-    joueur = player.Joueur(200, 200, 50, 50, JUMPFORCE) # Crée un joueur
+    joueur = player.Joueur(200, 200, 50, 80, JUMPFORCE) # Crée un joueur
     metro = Train(1000, 600, 500, 100)
     sol = pygame.Rect(0,HAUTEUR - 20, LARGEUR, 50)
 
