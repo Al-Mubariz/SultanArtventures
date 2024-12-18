@@ -102,8 +102,8 @@ def main(ecran):
 
     """ Crée un joueur, un train et un sol """
     joueur = player.Joueur(200, 200, 25, 50, JUMPFORCE) # Crée un joueur
-    metro = Train(1000, 500, 1000, 200) # Crée un train
-    sol = pygame.Rect(0,HAUTEUR - 20, LARGEUR, 50) # Crée un rectangle pour le sol
+    metro = Train(1000, 500, 1368, 960) # Crée un train
+    sol = pygame.Rect(0, 540, LARGEUR, 20) # Crée un rectangle pour le sol
 
 
     
@@ -123,8 +123,8 @@ def main(ecran):
         joueur.boucle() # Met à jour la position du joueur
         metro.boucle() # Met à jour la position du train
         deplacer_joueur(joueur) # Déplace le joueur en fonction des touches du clavier appuyées
-        dessiner(ecran, background, bg_image, joueur, metro) # Dessine les éléments du jeu sur l'écran
         pygame.draw.rect(ecran,WHITE, sol) # Dessine le sol
+        dessiner(ecran, background, bg_image, joueur, metro) # Dessine les éléments du jeu sur l'écran
         pygame.display.flip() # Met à jour l'écran
         update(joueur) #on met a jour les variables
 
@@ -136,7 +136,7 @@ def main(ecran):
 
         """ Si le train sort de l'écran, on le réinitialise et on le fait réapparaître après un temps aléatoire"""
         if metro.train.x + metro.train.width < 0: 
-            metro = Train(1000, 500, 1000, 200)
+            metro = Train(1000, 500, 1368, 960)
         temps = random.randint(5, 10)
         t = Timer(temps, deplacer_train, [metro])
         t.start()

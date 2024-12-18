@@ -9,6 +9,7 @@ class Train(pygame.sprite.Sprite):
         self.x_vitesse = 0
         self.direction = "gauche"
         self.compteur_animation = 0
+        self.Image = pygame.image.load('assets\\Metro.png')
     
     def mouvement(self, dx):
         self.train.x += dx # Ajoute la vitesse de déplacement à la vitesse actuelle
@@ -26,4 +27,4 @@ class Train(pygame.sprite.Sprite):
 
     def dessiner(self, ecran):
         """"Dessine le joueur sur l'écran."""
-        pygame.draw.rect(ecran, self.COULEUR, self.train)
+        ecran.blit(self.Image, (self.train.x, 0))
