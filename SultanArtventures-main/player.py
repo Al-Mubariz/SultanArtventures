@@ -81,7 +81,7 @@ class Joueur(pygame.sprite.Sprite):
         Args:
             sol (pygame.Rect): Le rectangle représentant le sol avec lequel vérifier la collision.
         """
-        proj = Sprt(self.rect, (30,0))
+        proj = Sprt(self.rect, (self.y_vel,0))
         collist = pygame.sprite.spritecollide(proj, colliders, False)
         if collist:
             for s in collist:
