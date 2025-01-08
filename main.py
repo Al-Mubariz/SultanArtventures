@@ -1,5 +1,6 @@
 import pygame, sys
 from button import Button
+from utils import login,register
 
 import main_moha
 
@@ -29,11 +30,23 @@ def options():
         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 260)) # Position du texte
         SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT) # Affiche le texte
 
-        OPTIONS_BACK = Button(image=None, pos=(640, 460),  # Bouton retour
+        OPTIONS_LOGIN = Button(image=None, pos=(640, 400),  # Bouton retour
+                            text_input="LOGIN", font=get_font(75), base_color="Black", hovering_color="Green") 
+
+        OPTIONS_REGISTER = Button(image=None, pos=(640, 550),  # Bouton retour
+                            text_input="REGISTER", font=get_font(75), base_color="Black", hovering_color="Green") 
+
+        OPTIONS_BACK = Button(image=None, pos=(640, 700),  # Bouton retour
                             text_input="RETOUR", font=get_font(75), base_color="Black", hovering_color="Green") 
 
         OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS) # Change la couleur du texte
         OPTIONS_BACK.update(SCREEN) # Met à jour le bouton
+
+        OPTIONS_LOGIN.changeColor(OPTIONS_MOUSE_POS) # Change la couleur du texte
+        OPTIONS_LOGIN.update(SCREEN) # Met à jour le bouton
+
+        OPTIONS_REGISTER.changeColor(OPTIONS_MOUSE_POS) # Change la couleur du texte
+        OPTIONS_REGISTER.update(SCREEN) # Met à jour le bouton
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -42,8 +55,16 @@ def options():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
                     main_menu()
+                if OPTIONS_LOGIN.checkForInput(OPTIONS_MOUSE_POS):
+                    if login(SCREEN) == 1:
+                        main_menu()
+                if OPTIONS_REGISTER.checkForInput(OPTIONS_MOUSE_POS):
+                    if register(SCREEN) == 1:
+                        main_menu()
+                
 
         pygame.display.update()
+
 
 def main_menu():
     """ Menu principal """
@@ -53,7 +74,7 @@ def main_menu():
         
         MENU_MOUSE_POS = pygame.mouse.get_pos()
 
-        MENU_TEXT = get_font(100).render("MENU PRINCIPAL", True, "#b68f40")
+        MENU_TEXT = get_font(80).render("MENU PRINCIPAL", True, "#b68f40")
         MENU_RECT = MENU_TEXT.get_rect(center=(640, 100))
 
         # Boutons
