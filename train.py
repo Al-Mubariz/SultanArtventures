@@ -1,29 +1,30 @@
 # Classe Train
 import pygame
+from constants import *
 
 class Train(pygame.sprite.Sprite):
-    COULEUR = (0, 50, 255)
+    COULEUR = GREEN
     
-    def __init__(self, x, y, largeur, hauteur):
-        self.train = pygame.Rect(x, y, largeur, hauteur)
-        self.x_vitesse = 0
-        self.direction = "gauche"
+    def __init__(self, x, y, w, h, *groups):
+        super().__init__(*groups)
+        self.image = pygame.surface.Surface((w,h))
+        self.image.fill(self.COULEUR)
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x,y)
         self.compteur_animation = 0
+        self.lance = False
     
-    def mouvement(self, dx):
-        self.train.x += dx # Ajoute la vitesse de déplacement à la vitesse actuelle
+    def mouvement(self, dir):
+        """dx est la vitesse et dir est la direction (1 pour la droite et -1 pour la gauche)"""
+        self.rect.x += VITESSE_TRAIN * dir # Ajoute la vitesse de déplacement à la vitesse actuelle
+        if dir == 1: self.direction = "droite"
+        elif dir == -1: self.direction = "gauche"
+        else: self.direction = "idle"
 
-    def mouvement_gauche(self, vitesse):
-        """Déplace le joueur vers la gauche de la meme manière mdr"""
-        self.x_vitesse = -vitesse
-        if self.direction != "gauche":
-            self.direction = "gauche"
-            self.compteur_animation = 0
+    def lancer(self):
+        self.lance = True
 
-    def boucle(self):
-        """Met à jour la position du joueur en fonction de sa vitesse."""
-        self.mouvement(self.x_vitesse)
 
-    def dessiner(self, ecran):
+    def draw(self, ecran):
         """"Dessine le joueur sur l'écran."""
-        pygame.draw.rect(ecran, self.COULEUR, self.train)
+        pygame.draw.rect(ecran, self.image, self.rect)
