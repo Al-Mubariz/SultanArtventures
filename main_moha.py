@@ -41,7 +41,7 @@ def dessiner(ecran, background, bg_image):
     for tile in background:
         ecran.blit(bg_image, tile)
 
-    pygame.display.update()
+    #pygame.display.update()
 
 def plyr_inputs(joueur):
     """Déplace le joueur en fonction des touches du clavier appuyées."""
@@ -72,7 +72,7 @@ def main(ecran):
     sols = pygame.sprite.Group()
     metro = train.Train(1000, 500, 1000, 200) # Crée un train
     sol1 = sol.Sol(0,HAUTEUR - 20, LARGEUR, 50) # Crée un sol
-    sol2 = sol.Sol(0,HAUTEUR - 100, LARGEUR/3, 10)
+    sol2 = sol.Sol(0,HAUTEUR - 100, LARGEUR/2, 50)
     metros.add(metro)
     sols.add(sol1, sol2)
     
