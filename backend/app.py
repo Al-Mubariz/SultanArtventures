@@ -62,6 +62,8 @@ def register():
     if errc == False:
         return {"error":"This username is already taken."}, 200
     else:
+        session["username"] = request.form["username"]
+        session["authenticated"] = True
         return {"msg":"Account successfully created."}, 200
 
 @app.route("/levels", methods=["GET","POST"])
