@@ -80,19 +80,37 @@ def main(ecran):
     
     run = True  # Variable de contrôle pour maintenir la boucle de jeu active
 
+    actime = pygame.time.get_ticks()
+    lasttime = 0
+
     # Boucle principale du jeu
     while run:
         clock.tick(FPS) # Limite le taux de rafraîchissement à la valeur de FPS (frames per second)
- 
+        
+        actime = pygame.time.get_ticks()
+        
         # Parcours de tous les événements dans la file d'attente des événements, si un événement de type QUIT est détecté (fermeture de la fenêtre) on met fin a la boucle de jeu
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 break
+            
         # inputs
         plyr_inputs(joueur) # Déplace le joueur en fonction des touches du clavier appuyées
-        # Mise à jour de l'écran
         
+        # Mise à jour des animation
+        if actime - lasttime > 80:
+            if joueur.direction == 'idle' and joueur.floored and joueur.idleAnim.stop:
+                joueur.idleAnim.restart()
+            elif joueur.direction == 'idle' and joueur.floored:
+                joueur.idleAnim.defilement()
+            else :
+                joueur.idleAnim.cacher()
+            joueur.image = pygame.transform.scale(joueur.idleAnim.get_imgCourante(), (150, 150))
+            lasttime = actime
+
+        
+        # Mise à jour de l'écran
         dessiner(ecran, background, bg_image) # Dessine les éléments du jeu sur l'écran
         allsprites.update()
         allsprites.draw(ecran)

@@ -2,6 +2,7 @@
 import pygame
 import train
 from constants import *
+from animation import Anima
 
 class Joueur(pygame.sprite.Sprite):
     COULEUR = RED # Couleur du joueur
@@ -12,9 +13,12 @@ class Joueur(pygame.sprite.Sprite):
         Constucteur de la classe Joueur, qui prend pour paramètres les coordonnées x et y du joueur, ainsi que sa largeur et sa hauteur. 
         (tsais les trucs que Mr Djahnit veut qu'on mette dans le constructeur)
         """
-        self.image = pygame.surface.Surface((w,h)) # a remplacer par la vrai image a terme
-        self.image.fill(self.COULEUR)
+        self.x, self.y =x, y
+        self.idleAnim = Anima('assets/PlayerAnim/IdlePlayerAnim/')
+        self.image = self.idleAnim.get_imgCourante().convert_alpha() # a remplacer par la vrai image a terme
+        self.image = pygame.transform.scale(self.image, (150, 150)) 
         self.rect = self.image.get_rect() # Crée un rectangle pour le joueur
+        self.rect = self.rect.scale_by(0.985)
         self.rect.topleft = (x,y) # on le positionne
 
         self.jumpforce = JUMPFORCE
@@ -24,6 +28,13 @@ class Joueur(pygame.sprite.Sprite):
         self.compteur_animation = 0 # Compteur pour l'animation du joueur
         self.floored = False
 
+    def draw(self, ecran):
+        self.image = self.idleAnim.get_imgCourante()
+        self.image = pygame.transform.scale(self.image, (150, 150))
+        self.rect = self.image.get_rect() # Crée un rectangle pour le joueur
+        self.rect = self.rect.scale_by(0.985)
+        self.rect.topleft = (self.x,self.y)
+        pygame.draw.rect(ecran,self.image,self.rect)
 
     def mouvement(self, dir):
         """dx est la vitesse et dir est la direction (1 pour la droite et _1 pour la gauche)"""
@@ -31,12 +42,6 @@ class Joueur(pygame.sprite.Sprite):
         if dir == 1: self.direction = "droite"
         elif dir == -1: self.direction = "gauche"
         else: self.direction = "idle"
-
-
-
-    def draw(self, ecran):
-        """"Dessine le joueur sur l'écran."""
-        pygame.draw.rect(ecran, self.COULEUR, self.rect)
 
     def jump(self):
         """
@@ -71,6 +76,8 @@ class Joueur(pygame.sprite.Sprite):
             self.rect.y = self.lastY
         else:
             self.rect.y += self.y_vel
+
+        
         
     def collideSol(self, colliders):
         """
