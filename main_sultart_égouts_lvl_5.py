@@ -6,11 +6,12 @@ import sys
 # Initialisation de Pygame et du module son
 pygame.init()
 pygame.mixer.init()
-pygame.mixer.set_num_channels(32)  # Augmente le nombre de canaux pour permettre plus de sons simultanés
+pygame.mixer.set_num_channels(32)  
 
 # --------------------------
 # Définition des constantes
 # --------------------------
+
 WIDTH, HEIGHT = 1920, 1080
 GRAVITY = 1.8
 JUMP_MAX = -30
@@ -112,7 +113,7 @@ for sound in rat_spawn_sounds:
 # Variables globales pour le défilement
 scroll_x = 0
 bg_index = 0
-scroll_direction = 0  # 1 pour droite, -1 pour gauche, 0 pour aucun
+scroll_direction = 0  
 
 # Variables de recharge d'attaque
 last_left_attack_time = 0
@@ -124,10 +125,10 @@ right_attack_cooldown = 5000  # ms
 spawn_queue = []
 death_animations = []
 
-
 # --------------------------
 # Définition des classes
 # --------------------------
+
 class Player:
     def __init__(self, x, y):
         self.rect = pygame.Rect(x, y, PLAYER_SIZE, PLAYER_SIZE)
@@ -140,7 +141,7 @@ class Player:
             if self.on_ground:
                 self.vel_y = JUMP_MAX
                 self.on_ground = False
-                jump_sound.play()  # On joue le son sans stopper d'autres sons
+                jump_sound.play()  
             else:
                 self.vel_y = max(self.vel_y - 0.5, JUMP_MAX)
         else:
@@ -271,6 +272,7 @@ class Rat:
 # --------------------------
 # Fonctions utilitaires
 # --------------------------
+
 def draw_attack_icons():
     icon_size = 120
     icon_x = 140
@@ -367,10 +369,10 @@ def game_over_screen():
         pygame.display.update()
         clock.tick(60)
 
-
 # --------------------------
 # Fonction principale du jeu
 # --------------------------
+
 def main():
     global scroll_x, bg_index, scroll_direction, final_transition_started, final_transition_progress
     global left_attack_anim_start, right_attack_anim_start, last_left_attack_time, last_right_attack_time
