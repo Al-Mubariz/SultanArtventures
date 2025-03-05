@@ -1,116 +1,162 @@
-import pygame, sys
-from button import Button
-from utils import login,register
+import pygame
+import random,sys
+from boulette import * 
+from playerB import *
+def game_over_screen(screen):
+    WIDTH, HEIGHT = 1920,1080 
+    # Arrête tous les sons lorsque le Game Over apparaît
+    pygame.mixer.stop()
+    bg_images = [pygame.image.load("assets/paris.jpg")]
+    clock = pygame.time.Clock()
+    # Utilisation de l'image "Bg egouts .png" comme arrière-plan
+    background = bg_images[0]
+    # Création d'un overlay semi-transparent (avec canal alpha)
+    overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 150))
+    overlay_y = -HEIGHT
+    animation_speed = 20  # Vitesse de glissement (pixels par frame)
 
-import main_moha
+    # Animation de glissement de l'overlay depuis le haut
+    while overlay_y < 0:
+        screen.blit(background, (0, 0))
+        screen.blit(overlay, (0, overlay_y))
+        pygame.display.update()
+        overlay_y += animation_speed
+        clock.tick(60)
 
-pygame.init()
+    # Affichage du texte "GAME OVER" et des boutons
+    button_width, button_height = 200, 50
+    restart_button_rect = pygame.Rect(WIDTH / 2 - button_width - 20, HEIGHT / 2, button_width, button_height)
+    quit_button_rect = pygame.Rect(WIDTH / 2 + 20, HEIGHT / 2, button_width, button_height)
+    font_big = pygame.font.Font(None, 80)
+    font_small = pygame.font.Font(None, 40)
+    game_over_text = font_big.render("GAME OVER", True, (255, 0, 0))
 
-SCREEN = pygame.display.set_mode((main_moha.LARGEUR, main_moha.HAUTEUR)) # Crée la fenêtre
-pygame.display.set_caption("Menu") # Nom de la fenêtre
-
-BG = pygame.image.load("assets/Background.png") # Background
-
-def get_font(size):
-    """ Retourne la police Press-Start-2P dans la taille désirée """
-    return pygame.font.Font("assets/font.ttf", size)
-
-def play():
-    """ Lance le jeu """
-    main_moha.main(main_moha.ecran)
-
-def options():
-    """ Options du jeu """
     while True:
-        OPTIONS_MOUSE_POS = pygame.mouse.get_pos() # Position de la souris
-
-        SCREEN.fill("white") # Fond blanc
-
-        OPTIONS_TEXT = get_font(45).render("En Developpement...", True, "Black") # Texte
-        OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 260)) # Position du texte
-        SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT) # Affiche le texte
-
-        OPTIONS_LOGIN = Button(image=None, pos=(640, 400),  # Bouton retour
-                            text_input="LOGIN", font=get_font(75), base_color="Black", hovering_color="Green") 
-
-        OPTIONS_REGISTER = Button(image=None, pos=(640, 550),  # Bouton retour
-                            text_input="REGISTER", font=get_font(75), base_color="Black", hovering_color="Green") 
-
-        OPTIONS_BACK = Button(image=None, pos=(640, 700),  # Bouton retour
-                            text_input="RETOUR", font=get_font(75), base_color="Black", hovering_color="Green") 
-
-        OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS) # Change la couleur du texte
-        OPTIONS_BACK.update(SCREEN) # Met à jour le bouton
-
-        OPTIONS_LOGIN.changeColor(OPTIONS_MOUSE_POS) # Change la couleur du texte
-        OPTIONS_LOGIN.update(SCREEN) # Met à jour le bouton
-
-        OPTIONS_REGISTER.changeColor(OPTIONS_MOUSE_POS) # Change la couleur du texte
-        OPTIONS_REGISTER.update(SCREEN) # Met à jour le bouton
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
-                    main_menu()
-                if OPTIONS_LOGIN.checkForInput(OPTIONS_MOUSE_POS):
-                    if login(SCREEN) == 1:
-                        main_menu()
-                if OPTIONS_REGISTER.checkForInput(OPTIONS_MOUSE_POS):
-                    if register(SCREEN) == 1:
-                        main_menu()
-                
-
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if restart_button_rect.collidepoint(mouse_pos):
+                    return "restart"
+                elif quit_button_rect.collidepoint(mouse_pos):
+                    return "quit"
+        screen.blit(background, (0, 0))
+        screen.blit(overlay, (0, 0))
+        screen.blit(game_over_text, (WIDTH / 2 - game_over_text.get_width() / 2, HEIGHT / 2 - 150))
+        pygame.draw.rect(screen, (255, 255, 255), restart_button_rect)
+        pygame.draw.rect(screen, (255, 255, 255), quit_button_rect)
+        restart_text = font_small.render("Restart", True, (0, 0, 0))
+        quit_text = font_small.render("Quit", True, (0, 0, 0))
+        screen.blit(restart_text, (restart_button_rect.x + (button_width - restart_text.get_width()) / 2,
+                                   restart_button_rect.y + (button_height - restart_text.get_height()) / 2))
+        screen.blit(quit_text, (quit_button_rect.x + (button_width - quit_text.get_width()) / 2,
+                                quit_button_rect.y + (button_height - quit_text.get_height()) / 2))
         pygame.display.update()
+        clock.tick(60)
 
+def main():
+    # Définir la taille de la fenêtre
+    WIDTH, HEIGHT = 1920,1080 
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("niveau boulette")
 
-def main_menu():
-    """ Menu principal """
-    while True:
-        
-        SCREEN.blit(BG, (0, 0))
-        
-        MENU_MOUSE_POS = pygame.mouse.get_pos()
+    bs = pygame.sprite.Group()
+    b1 = Boulette(0,WIDTH//2,0,30,bs)
+    sols = pygame.sprite.Group()
+    sol = Sol(0,screen.get_height()-20, screen.get_width(),20, sols)
+    
+    p = Player(screen)
+    print(sols in sols)
 
-        MENU_TEXT = get_font(80).render("MENU PRINCIPAL", True, "#b68f40")
-        MENU_RECT = MENU_TEXT.get_rect(center=(640, 100))
+    
 
-        # Boutons
-        PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(640, 250), 
-                            text_input="JOUER", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
-        OPTIONS_BUTTON = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(640, 400), 
-                            text_input="OPTIONS", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
-        QUIT_BUTTON = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(640, 550), 
-                            text_input="QUITTER", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+    # Définir les couleurs
+    WHITE = (255, 255, 255)
+    RED = (255,0,0)
+    BLUE = (0,0,255)
+    GREEN = (0,255,0)
+
+    # Définir les paramètres de la boucle de jeu
+    FPS = 30
+    clock = pygame.time.Clock()
+
+    # Fonction principale du jeu
+    loop = 1
+    frame = 0
+    seconds = 1
+    running = True
+    while running:
+        # timing d'apparition des boulettes
+        frame += 1
+        if frame >= FPS :
+            seconds+=1
+            frame = 0 
+        if seconds%loop == 0:
+            loop = random.randint(2,7)
+            size = random.randint(1,7)
+            spd = 9
+            # création de nouvelles boulettes selon une distribution gaussienne
+            x = random.gauss(screen.get_width()//2,400)
+            x = constrained(x,20,screen.get_width()-20) # evite de sortir de l'ecran/poubelle
+            bs.add(Boulette(x,-50,spd,size))
+            sols.add(bs)
+            
+            
         
-        SCREEN.blit(MENU_TEXT, MENU_RECT)
-        
-        # Met à jour les boutons
-        for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
-            button.changeColor(MENU_MOUSE_POS)
-            button.update(SCREEN)
-        
-        # Vérifie les événements
+        # Gérer les événements
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT :
                 pygame.quit()
                 sys.exit()
-                
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                
-                if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    play()
-                    
-                if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    options()
-                    
-                if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    pygame.quit()
-                    sys.exit()
-                    
 
-        pygame.display.update()
+        # Remplir l'écran avec une couleur
+        screen.fill(WHITE)
+        # on affiche le sol et on gere les fonctions de tous les sprites
+        sol.draw(screen)
+        #p.isFloored(sol)
+        for b in sols.sprites():
+            p.isFloored(b)
+        
+        for b in bs.sprites():# check si les sprites sont au sol
+            b.isFloored(sol)
+            for bb in bs:
+                if bb != b != p:
+                    b.isFloored(bb)
+            if b != p:
+                # collisions
+                p.collideRight(b)
+                p.collideLeft(b)
 
-main_menu()
+                if p.isKill(b): # event mort
+                    running = False
+        # on met a jour les variables puis on affiche les sprites
+        """if p.checkvictory(0):
+            running ==  False"""
+        bs.update()
+        p.update()
+        bs.draw(screen)
+        p.draw(screen)
+        
+        
+        # Mettre à jour l'affichage
+        pygame.display.flip()
+
+        # Limiter la vitesse de la boucle à 60 FPS
+        clock.tick(FPS)
+
+    
+    if not p.checkvictory(0):
+        choice = game_over_screen(screen)
+        if choice == "restart":
+            main()  # Redémarrage
+        else:
+            pygame.quit()
+            sys.exit()
+    else:
+        pygame.quit()
+        sys.exit()
+if __name__ == "__main__":
+    main()
