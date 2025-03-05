@@ -1,0 +1,36 @@
+Game Developer / Programmeur : Boris, Camille, Côme, Mohamed, Léopold
+AI Programmer : Boris, Camille, Côme, Mohamed, Léopold
+Engine Programmer : Boris, Camille, Côme, Mohamed, Léopold
+Network Programmer : Boris, Camille, Côme, Mohamed, Léopold
+VR/AR Developer : Boris, Camille, Côme, Mohamed, Léopold
+
+Game Designer : Boris, Camille, Côme, Mohamed, Léopold
+Level Designer : Boris, Camille, Côme, Mohamed, Léopold
+Narrative Designer : Boris, Camille, Côme, Mohamed, Léopold
+Photograph : Boris, Léopold
+Artiste 2D : Camille, Léopold
+Concept Artist : Camille, Léopold
+Animateur 2D : Léopold
+Environment Artist : Camille
+UI/UX Designer : Camille
+Character Designer : Léopold
+VFX Artist : Camille Léopold
+Voice Actor : Boris, Camille, Côme, Mohamed, Léopold
+Body Actor : Léopold
+Garbage Actor : Boris
+
+Sound Designer : Camille
+Compositeur : Camille
+Ingénieur du son : Camille
+
+Producer : Boris, Camille, Côme, Mohamed, Léopold
+Game Director : Boris
+Technical Director : Côme
+Lead Developer : Mohamed
+Art Director : Camille, Léopold
+
+Community Manager : Mohamed
+Marketing Manager : Boris, Camille, Côme, Mohamed, Léopold
+Content Creator : Mohamed
+
+Game Tester : Boris, Camille, Côme, Mohamed, Léopold
