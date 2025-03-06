@@ -16,7 +16,7 @@ class Boulette(pygame.sprite.Sprite):
             self.rect.y += self.spd
         
     def isFloored(self,other):
-        """test de collision avec le sol"""
+        """test de collision avec le sol, other est un objet heritier de pygame.sprite.Sprite"""
         d = abs(self.rect.bottom - other.rect.top)
         m = math.ceil(self.spd)
         if m != 0 and d%m == 0:
@@ -42,12 +42,15 @@ class Sol(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = (x,y)
     def draw(self,screen):
+        """affichage du sol"""
         pygame.draw.rect(screen,(0,0,255),self.rect)
         
 def constrained(x,mini,maxi):
+    """observe une variable et renvoie les valeur maxi ou mini si cette variable n'est plus dans [mini;maxi], sinon elle-meme""""
     return maxi if x > maxi else mini if x < mini else x
 
 if __name__ == "__main__":
+    #tests
     print(constrained(8,2,10))
     print(constrained(1,2,10))
     print(constrained(11,2,10))
