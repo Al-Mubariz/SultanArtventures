@@ -3,6 +3,7 @@ import random,sys
 from boulette import * 
 from playerB import *
 def game_over_screen(screen):
+    """crée un ecran de mort source niveau egout"""
     WIDTH, HEIGHT = 1920,1080 
     # Arrête tous les sons lorsque le Game Over apparaît
     pygame.mixer.stop()
@@ -58,6 +59,7 @@ def game_over_screen(screen):
         clock.tick(60)
 
 def main():
+    """programme principale"""
     # Définir la taille de la fenêtre
     WIDTH, HEIGHT = 1920,1080 
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -70,8 +72,6 @@ def main():
     
     p = Player(screen)
     print(sols in sols)
-
-    
 
     # Définir les couleurs
     WHITE = (255, 255, 255)
@@ -102,10 +102,8 @@ def main():
             x = random.gauss(screen.get_width()//2,400)
             x = constrained(x,20,screen.get_width()-20) # evite de sortir de l'ecran/poubelle
             bs.add(Boulette(x,-50,spd,size))
-            sols.add(bs)
+            sols.add(bs) # on ajoute les nouvelles boulettes pour les gerer comme les precedentes
             
-            
-        
         # Gérer les événements
         for event in pygame.event.get():
             if event.type == pygame.QUIT :
@@ -132,9 +130,10 @@ def main():
 
                 if p.isKill(b): # event mort
                     running = False
+        #condition de victoire
+        if p.checkvictory(0):
+            running ==  False
         # on met a jour les variables puis on affiche les sprites
-        """if p.checkvictory(0):
-            running ==  False"""
         bs.update()
         p.update()
         bs.draw(screen)
@@ -147,7 +146,7 @@ def main():
         # Limiter la vitesse de la boucle à 60 FPS
         clock.tick(FPS)
 
-    
+    # pendant l'ecran de mort si on a pas gagné
     if not p.checkvictory(0):
         choice = game_over_screen(screen)
         if choice == "restart":
@@ -155,7 +154,7 @@ def main():
         else:
             pygame.quit()
             sys.exit()
-    else:
+    else: # a modifier avec le lancement du prochain niveau
         pygame.quit()
         sys.exit()
 if __name__ == "__main__":
