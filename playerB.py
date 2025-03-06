@@ -40,13 +40,15 @@ class Player(pygame.sprite.Sprite):
         else:
             self.dirX = 0
         constrain(self,20,self.screen.get_width()-20)
-        
+
+        # gestion du mouvement vertical
         if not self.floored:
             self.rect = self.rect.move(0,self.Yspd)
             self.Yspd += GRAVITY
     
     
     def isFloored(self, *others):
+        """check les collisions avec les objets contenus dans le tuple other (boulettes + sol)"""
         for other in others:
             
             d = abs(self.rect.bottom - other.rect.top)
