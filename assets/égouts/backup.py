@@ -15,6 +15,7 @@ import pygame
 import random
 import math
 import sys
+from animation import Anima  # Import de la classe d'animation
 
 # Initialisation de Pygame et du module son
 pygame.init()
@@ -118,13 +119,13 @@ son_morsure_rat.set_volume(0.1)
 attaque_droite_speciale_jouee = False
 
 # Sons liés aux rats
-son_spawn_rat_petit = pygame.mixer.Sound("rats\petits_rats_ambiance.wav")
-son_spawn_rat_grand = pygame.mixer.Sound("rats\gros_rats_ambiance.wav")
-son_saut_rat_petit = pygame.mixer.Sound("rats\petit_rat_saut.wav")
+son_spawn_rat_petit = pygame.mixer.Sound("rats\\petits_rats_ambiance.wav")
+son_spawn_rat_grand = pygame.mixer.Sound("rats\\gros_rats_ambiance.wav")
+son_saut_rat_petit = pygame.mixer.Sound("rats\\petit_rat_saut.wav")
 sons_saut_rat_grand = [
-    pygame.mixer.Sound("rats\gros_rat\gros_rat_attaque_1.wav"),
-    pygame.mixer.Sound("rats\gros_rat\gros_rat_attaque_2.wav"),
-    pygame.mixer.Sound("rats\gros_rat\gros_rat_attaque_3.wav")
+    pygame.mixer.Sound("rats\\gros_rat\\gros_rat_attaque_1.wav"),
+    pygame.mixer.Sound("rats\\gros_rat\\gros_rat_attaque_2.wav"),
+    pygame.mixer.Sound("rats\\gros_rat\\gros_rat_attaque_3.wav")
 ]
 
 # Canaux dédiés pour les sons liés aux rats
@@ -159,13 +160,18 @@ animations_mort = []
 
 class Player:
     """
-    Classe représentant le joueur.
+    Classe représentant le joueur avec animations.
     """
     def __init__(self, x, y):
         self.rect = pygame.Rect(x, y, TAILLE_JOUEUR, TAILLE_JOUEUR)
         self.vitesse_y = 0
         self.au_sol = False
         self.pv = 1001
+        # Intégration des animations pour le player
+        self.idleAnim = Anima('assets/PlayerAnim/IdlePlayerAnim1/')
+        self.walkAnim = Anima('assets/PlayerAnim/WalkPlayerAnim1/')
+        self.action = 'idle'      # état par défaut
+        self.direction = 'droite' # pour gérer l'orientation
 
     def jump(self, touches):
         """Gère le saut du joueur."""
@@ -191,8 +197,25 @@ class Player:
             self.vitesse_y = 0
 
     def display(self):
-        """Affiche le joueur."""
-        pygame.draw.rect(ecran, (0, 255, 0), self.rect)
+        """Affiche le joueur en utilisant les animations."""
+        if self.action == 'idle':
+            img = self.idleAnim.get_imgCourante()
+        elif self.action == 'walk':
+            img = self.walkAnim.get_imgCourante()
+        else:
+            img = self.idleAnim.get_imgCourante()  # valeur par défaut
+
+        if self.direction == 'gauche':
+            img = pygame.transform.flip(img, True, False)
+        img = pygame.transform.scale(img, (TAILLE_JOUEUR, TAILLE_JOUEUR))
+        ecran.blit(img, self.rect.topleft)
+
+    def update(self):
+        """Met à jour l'animation en fonction de l'action du joueur."""
+        if self.action == 'idle':
+            self.idleAnim.defilement()
+        elif self.action == 'walk':
+            self.walkAnim.defilement()
 
     def take_damage(self, amount):
         """Réduit les points de vie du joueur."""
@@ -561,7 +584,18 @@ def main():
         ecran.blit(image_sol, (0, SOL_Y))
         player.jump(touches)
         player.apply_gravity()
-        player.display()
+        # Mise à jour de l'état du joueur en fonction des touches pour gérer l'animation et l'orientation
+        if touches[pygame.K_d]:
+            player.action = 'walk'
+            player.direction = 'droite'
+        elif touches[pygame.K_q]:
+            player.action = 'walk'
+            player.direction = 'gauche'
+        else:
+            player.action = 'idle'
+
+        player.update()   # Actualise l'animation
+        player.display()  # Affiche le sprite animé du player
         player.display_hp()
         display_attack_icons()
 
