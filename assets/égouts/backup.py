@@ -53,13 +53,13 @@ pygame.display.set_caption("Sultan Art'ventures LvL 5")
 # Chargement des ressources
 # --------------------------
 images_fond = [
-    pygame.image.load("Bg egouts.png"),
-    pygame.image.load("Bg egouts.png"),
-    pygame.image.load("Bg egouts.png")
+    pygame.image.load("bg_egouts.png"),
+    pygame.image.load("bg_egouts.png"),
+    pygame.image.load("bg_egouts.png")
 ]
-image_sol = pygame.image.load("Sol egouts HD.png")
-image_fond_final = pygame.image.load("Fond egouts .png")
-image_fond_combine = pygame.image.load("fond combiné.png")
+image_sol = pygame.image.load("sol_egouts.png")
+image_fond_final = pygame.image.load("fond_egouts.png")
+image_fond_combine = pygame.image.load("fond_combine.png")
 
 # Images pour l'écran Game Over
 image_game_over_bg = pygame.image.load("fond_sans_g_o.png").convert_alpha()
@@ -69,12 +69,12 @@ progression_transition_finale = 0
 transition_finale_lancee = False
 
 # Icônes d'attaque
-icone_attaque_gauche = pygame.image.load("icone poing final.png").convert_alpha()
-icone_attaque_droite = pygame.image.load("icone sabre final.png").convert_alpha()
+icone_attaque_gauche = pygame.image.load("icone_poing_final.png").convert_alpha()
+icone_attaque_droite = pygame.image.load("icone_sabre_final.png").convert_alpha()
 
 # Animations d'attaque
-attaque1 = pygame.image.load("Punch anim.png.").convert_alpha()
-attaque2 = pygame.image.load("Anim épée.png.").convert_alpha()
+attaque1 = pygame.image.load("punch_anim.png.").convert_alpha()
+attaque2 = pygame.image.load("anim-epee.png.").convert_alpha()
 anim_attaque_gauche = pygame.transform.scale(attaque1, (100, 100))
 anim_attaque_droite = pygame.transform.scale(attaque2, (100, 100))
 debut_anim_attaque_gauche = None
@@ -82,22 +82,22 @@ debut_anim_attaque_droite = None
 duree_anim_attaque = 200  # Durée du fade-out en ms
 
 # Images pour les animations de mort (gros rat)
-tete_rat = pygame.image.load("G.Rat cul.png").convert_alpha()
-queue_rat = pygame.image.load("G.Rat tete.png").convert_alpha()
+tete_rat = pygame.image.load("g.rat_cul.png").convert_alpha()
+queue_rat = pygame.image.load("g.rat_tete.png").convert_alpha()
 
 # Images des rats
 image_rat_rouge = pygame.image.load("rat court 1 (2).png").convert_alpha()
 image_rat_bleu = pygame.image.load("rat court 2 (2).png").convert_alpha()
 image_rat_saut = pygame.image.load("rat saut new.png").convert_alpha()
-rat_grand_rouge = pygame.image.load("G.Rat cours 1 (2).png.").convert_alpha()
-rat_grand_bleu = pygame.image.load("G.Rat cours 2 (2).png.").convert_alpha()
-rat_grand_saut = pygame.image.load("G.Rat saut (2).png").convert_alpha()
+rat_grand_rouge = pygame.image.load("g.rat_cours_1.png").convert_alpha()
+rat_grand_bleu = pygame.image.load("g.rat_cours_2.png").convert_alpha()
+rat_grand_saut = pygame.image.load("g.rat_saut.png").convert_alpha()
 
 # Police
-police_jeu = pygame.font.Font("Baberry.ttf", 25)
+police_jeu = pygame.font.Font("baberry.ttf", 25)
 
 # Sons et musique
-pygame.mixer.music.load("ambiance égouts.wav")
+pygame.mixer.music.load("ambiance_egouts.wav")
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play()
 
@@ -108,7 +108,7 @@ canal_pas = pygame.mixer.Channel(0)
 
 son_saut = pygame.mixer.Sound("jump.mp3")
 son_attaque_gauche = pygame.mixer.Sound("punch.mp3")
-son_attaque_droite_defaut = pygame.mixer.Sound("epée son.mp3")
+son_attaque_droite_defaut = pygame.mixer.Sound("epee_son.mp3")
 son_attaque_droite_special = pygame.mixer.Sound("ching.mp3")
 son_attaque_gauche.set_volume(0.8)
 son_attaque_droite_defaut.set_volume(0.6)
@@ -119,13 +119,13 @@ son_morsure_rat.set_volume(0.1)
 attaque_droite_speciale_jouee = False
 
 # Sons liés aux rats
-son_spawn_rat_petit = pygame.mixer.Sound("rats\\petits_rats_ambiance.wav")
-son_spawn_rat_grand = pygame.mixer.Sound("rats\\gros_rats_ambiance.wav")
-son_saut_rat_petit = pygame.mixer.Sound("rats\\petit_rat_saut.wav")
+son_spawn_rat_petit = pygame.mixer.Sound("rats\petits_rats_ambiance.wav")
+son_spawn_rat_grand = pygame.mixer.Sound("rats\gros_rats_ambiance.wav")
+son_saut_rat_petit = pygame.mixer.Sound("rats\petit_rat_saut.wav")
 sons_saut_rat_grand = [
-    pygame.mixer.Sound("rats\\gros_rat\\gros_rat_attaque_1.wav"),
-    pygame.mixer.Sound("rats\\gros_rat\\gros_rat_attaque_2.wav"),
-    pygame.mixer.Sound("rats\\gros_rat\\gros_rat_attaque_3.wav")
+    pygame.mixer.Sound("rats\gros_rat\gros_rat_attaque_1.wav"),
+    pygame.mixer.Sound("rats\gros_rat\gros_rat_attaque_2.wav"),
+    pygame.mixer.Sound("rats\gros_rat\gros_rat_attaque_3.wav")
 ]
 
 # Canaux dédiés pour les sons liés aux rats
