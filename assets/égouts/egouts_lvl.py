@@ -8,7 +8,6 @@ un sultan ottoman doit éviter et attaquer des rats (petits et gros) qui apparai
 Chaque type d'événement (apparition, saut, attaque) déclenche un son spécifique, et certains sons 
 sont joués sur des canaux dédiés.
 
-Auteur : Camille Babaei
 Date : 02-03-2025
 """
 
