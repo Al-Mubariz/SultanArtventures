@@ -2,16 +2,16 @@ import pygame
 import random
 import math
 import sys
+from animation import Anima  # Import de la classe d'animation
 
 # Initialisation de Pygame et du module son
 pygame.init()
 pygame.mixer.init()
-pygame.mixer.set_num_channels(32)  
+pygame.mixer.set_num_channels(32)
 
 # --------------------------
 # Définition des constantes
 # --------------------------
-
 WIDTH, HEIGHT = 1920, 1080
 GRAVITY = 1.8
 JUMP_MAX = -30
@@ -101,7 +101,7 @@ rat_bite_sound.set_volume(0.1)
 
 special_right_attack_played = False
 
-# Sons de spawn pour les rats ( oubliez pour l'instant parce que là les sons sont dégeu )
+# Sons de spawn pour les rats (à ajuster si nécessaire)
 rat_spawn_sounds = [
     pygame.mixer.Sound("égouts/rats/rats 1.mp3"),
     pygame.mixer.Sound("égouts/rats/rats 2.mp3"),
@@ -128,20 +128,25 @@ death_animations = []
 # --------------------------
 # Définition des classes
 # --------------------------
-
 class Player:
     def __init__(self, x, y):
+        # Utilisation de PLAYER_SIZE pour la taille du joueur
         self.rect = pygame.Rect(x, y, PLAYER_SIZE, PLAYER_SIZE)
         self.vel_y = 0
-        self.on_ground = False
+        self.on_ground = True
         self.hp = 1001
+        # Intégration des animations pour le player
+        self.idleAnim = Anima('assets/PlayerAnim/IdlePlayerAnim1/')
+        self.walkAnim = Anima('assets/PlayerAnim/WalkPlayerAnim1/')
+        self.action = 'idle'      # état par défaut
+        self.direction = 'droite' # pour gérer l'orientation
 
     def jump(self, keys):
         if keys[pygame.K_SPACE]:
             if self.on_ground:
                 self.vel_y = JUMP_MAX
                 self.on_ground = False
-                jump_sound.play()  
+                jump_sound.play()
             else:
                 self.vel_y = max(self.vel_y - 0.5, JUMP_MAX)
         else:
@@ -157,8 +162,28 @@ class Player:
             self.on_ground = True
             self.vel_y = 0
 
-    def draw(self):
-        pygame.draw.rect(screen, (0, 255, 0), self.rect)
+    def display(self):
+        # Sélection de l'image selon l'action (idle ou walk)
+        if self.action == 'idle':
+            img = self.idleAnim.get_imgCourante()
+        elif self.action == 'walk':
+            img = self.walkAnim.get_imgCourante()
+        else:
+            img = self.idleAnim.get_imgCourante()  # par défaut
+
+        # Gestion de l'orientation
+        if self.direction == 'gauche':
+            img = pygame.transform.flip(img, True, False)
+        # Redimensionnement de l'image
+        img = pygame.transform.scale(img, (PLAYER_SIZE, PLAYER_SIZE))
+        screen.blit(img, self.rect.topleft)
+
+    def update(self):
+        # Mise à jour de l'animation selon l'état
+        if self.action == 'idle':
+            self.idleAnim.defilement()
+        elif self.action == 'walk':
+            self.walkAnim.defilement()
 
     def take_damage(self, amount):
         self.hp -= amount
@@ -272,7 +297,6 @@ class Rat:
 # --------------------------
 # Fonctions utilitaires
 # --------------------------
-
 def draw_attack_icons():
     icon_size = 120
     icon_x = 140
@@ -288,7 +312,6 @@ def draw_attack_icons():
     screen.blit(left_icon, (icon_x, icon_y))
     screen.blit(right_icon, (icon_x + spacing, icon_y))
 
-# Fonction pour le déplacement horizontal du joueur
 def scroll_background():
     global scroll_x, bg_index, scroll_direction
     screen.blit(bg_images[bg_index], (-scroll_x, 0))
@@ -300,7 +323,6 @@ def scroll_background():
     elif scroll_direction < 0 and scroll_x <= 0:
         scroll_x = WIDTH
         bg_index = (bg_index - 1) % len(bg_images)
-
 
 def process_spawn_queue(current_time):
     i = 0
@@ -314,36 +336,27 @@ def process_spawn_queue(current_time):
         else:
             i += 1
 
-
 def game_over_screen():
     # Arrête tous les sons lorsque le Game Over apparaît
     pygame.mixer.stop()
-
     clock = pygame.time.Clock()
-    # Utilisation de l'image "Bg egouts .png" comme arrière-plan
     background = bg_images[0]
-    # Création d'un overlay semi-transparent (avec canal alpha)
     overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
     overlay.fill((0, 0, 0, 150))
     overlay_y = -HEIGHT
     animation_speed = 20  # Vitesse de glissement (pixels par frame)
-
-    # Animation de glissement de l'overlay depuis le haut
     while overlay_y < 0:
         screen.blit(background, (0, 0))
         screen.blit(overlay, (0, overlay_y))
         pygame.display.update()
         overlay_y += animation_speed
         clock.tick(60)
-
-    # Affichage du texte "GAME OVER" et des boutons
     button_width, button_height = 200, 50
     restart_button_rect = pygame.Rect(WIDTH / 2 - button_width - 20, HEIGHT / 2, button_width, button_height)
     quit_button_rect = pygame.Rect(WIDTH / 2 + 20, HEIGHT / 2, button_width, button_height)
     font_big = pygame.font.Font(None, 80)
     font_small = pygame.font.Font(None, 40)
     game_over_text = font_big.render("GAME OVER", True, (255, 0, 0))
-
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -372,7 +385,6 @@ def game_over_screen():
 # --------------------------
 # Fonction principale du jeu
 # --------------------------
-
 def main():
     global scroll_x, bg_index, scroll_direction, final_transition_started, final_transition_progress
     global left_attack_anim_start, right_attack_anim_start, last_left_attack_time, last_right_attack_time
@@ -412,9 +424,10 @@ def main():
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                # Attaque gauche (bouton 1)
                 if event.button == 1:
                     if current_time - last_left_attack_time >= left_attack_cooldown:
-                        channel = pygame.mixer.find_channel()  # Récupère un canal libre
+                        channel = pygame.mixer.find_channel()
                         if channel:
                             channel.play(attack_left_sound)
                         killed = False
@@ -426,7 +439,7 @@ def main():
                         if killed:
                             left_attack_anim_start = current_time
 
-                # Pour l'attaque droite (bouton 3)
+                # Attaque droite (bouton 3)
                 elif event.button == 3:
                     if current_time - last_right_attack_time >= right_attack_cooldown:
                         channel = pygame.mixer.find_channel()
@@ -481,9 +494,22 @@ def main():
                 screen.blit(final_bg_image, (0, 0))
 
         screen.blit(floor_image, (0, FLOOR_Y))
+        # Gestion du saut et de la gravité
         player.jump(keys)
         player.apply_gravity()
-        player.draw()
+
+        # Mise à jour de l'état du joueur en fonction des touches
+        if keys[pygame.K_d]:
+            player.action = 'walk'
+            player.direction = 'droite'
+        elif keys[pygame.K_q]:
+            player.action = 'walk'
+            player.direction = 'gauche'
+        else:
+            player.action = 'idle'
+
+        player.update()   # Actualise l'animation
+        player.display()  # Affiche le sprite animé
         player.draw_HP()
         draw_attack_icons()
 
@@ -558,7 +584,6 @@ def main():
                         spawn_queue.append((current_time + i * 1000, True, base_x_position + i * separation_distance))
                     last_big_spawn = current_time
 
-
         process_spawn_queue(current_time)
 
         for enemy in enemies[:]:
@@ -576,14 +601,12 @@ def main():
         if player.hp <= 0:
             going = False
 
-    # Fin de la boucle principale : affichage de l'écran Game Over
     choice = game_over_screen()
     if choice == "restart":
         main()  # Redémarrage
     else:
         pygame.quit()
         sys.exit()
-
 
 # Lancement du jeu
 main()
